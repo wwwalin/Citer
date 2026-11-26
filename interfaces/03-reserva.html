@@ -1,0 +1,18 @@
+<!-- Pantalla 3: Reserva - extraída de src/app/home/home.page.html -->
+<section *ngSwitchCase="'booking'" class="flow-screen booking-screen">
+        <header class="simple-header"><button class="back-link" (click)="screen = 'service'"><ion-icon name="chevron-back"></ion-icon> {{ currentBusiness?.name }}</button><span class="step-count">03 / 04</span></header>
+        <h1 class="booking-title">Elige fecha y hora</h1>
+        <p class="booking-subtitle">{{ selectedService.name }} · {{ selectedService.duration }} min · RD$ {{ selectedService.price }}</p>
+        <ion-card class="calendar-card"><ion-card-content class="calendar-content"><div class="month-heading"><strong>{{ monthLabel }}</strong><div><button aria-label="Mes anterior" disabled>‹</button><button aria-label="Mes siguiente" (click)="showToast('Próximamente podrás ver más fechas')">›</button></div></div>
+        <div class="calendar-row"><button *ngFor="let day of days" [class.selected]="selectedDate === day.iso" (click)="selectedDate = day.iso"><small>{{ day.weekday }}</small><strong>{{ day.number }}</strong></button></div></ion-card-content></ion-card>
+        <div class="section-heading times-heading"><h2>Horarios disponibles</h2></div>
+        <ion-list class="time-list"><div class="time-grid"><button *ngFor="let time of times" [class.selected]="selectedTime === time" (click)="selectedTime = time">{{ time }}</button></div></ion-list>
+        <div class="section-heading details-heading"><h2>Tus datos</h2></div>
+        <label class="field-label">Nombre<input [(ngModel)]="customer.name" type="text" placeholder="Alex Morgan" autocomplete="name"></label>
+        <label class="field-label">Número de teléfono<input [(ngModel)]="customer.phone" type="tel" placeholder="+1 (902) 555-0142" autocomplete="tel"></label>
+        <label class="field-label">Correo para confirmación<input [(ngModel)]="customer.email" type="email" placeholder="alex@email.com" autocomplete="email"></label>
+        <div class="total-row"><span>Total</span><strong>RD$ {{ selectedService.price }}.00 · sin cargos</strong></div>
+        <ion-button expand="block" class="primary-button confirm-button" (click)="confirmBooking()">Confirmar cita</ion-button>
+        <p class="privacy-note">Tu teléfono solo se usará para gestionar tu reserva.</p>
+      </section>
+

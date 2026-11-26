@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 360" role="img" aria-labelledby="title">
+  <title id="title">Interior abstracto de Studio Nova</title>
+  <rect width="900" height="360" fill="#eeeaf2"/>
+  <path d="M70 300 300 65l190 190 150-155 190 200" fill="none" stroke="#b7aabd" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="705" cy="88" r="34" fill="#e1d4ef" opacity=".72"/>
+  <path d="M0 326h900" stroke="#d9d1df" stroke-width="3"/>
+</svg>

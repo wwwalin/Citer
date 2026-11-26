@@ -1,0 +1,14 @@
+<!-- Pantalla 2: Servicio - extraída de src/app/home/home.page.html -->
+<section *ngSwitchCase="'service'" class="flow-screen">
+        <header class="simple-header"><button class="back-link" (click)="screen = 'explore'"><ion-icon name="chevron-back"></ion-icon> Volver a resultados</button><span class="step-count">02 / 04</span></header>
+        <ion-card class="business-cover" (touchstart)="onPinchStart($event)" (touchmove)="onPinchMove($event)" (touchend)="onPinchEnd()" aria-label="Imagen del negocio: pellizca para ampliar"><img class="cover-art" src="assets/studio-nova.svg" alt="Vista del interior de Studio Nova" [style.transform]="'scale(' + imageScale + ')' "><span class="open-pill">Abierto</span><span class="zoom-hint"><ion-icon name="expand-outline"></ion-icon> Pellizca para ampliar</span></ion-card>
+        <div class="business-title"><h1>{{ currentBusiness?.name }}</h1><p>{{ currentBusiness?.service }} · ★ {{ currentBusiness?.rating }} ({{ currentBusiness?.reviews }} reseñas)</p><p class="pin-line">📍 {{ currentBusiness?.address }} · {{ currentBusiness?.distance }}</p></div>
+        <div class="section-heading service-heading"><h2>Elige un servicio</h2></div>
+        <ion-list class="service-options">
+          <button *ngFor="let service of services" class="service-option" [class.selected]="selectedService.name === service.name" (click)="selectedService = service">
+            <span class="radio-dot"><span></span></span><span class="service-label"><strong>{{ service.name }}</strong><small>{{ service.duration }} min</small></span><strong class="service-price">RD$ {{ service.price }}</strong>
+          </button>
+        </ion-list>
+        <div class="service-footer"><ion-button expand="block" class="primary-button" (click)="screen = 'booking'">Elegir horario · RD$ {{ selectedService.price }}</ion-button><p>Precios y duración visibles antes de reservar.</p></div>
+      </section>
+

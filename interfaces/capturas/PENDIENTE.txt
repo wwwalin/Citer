@@ -1,0 +1,4 @@
+Capturas requeridas:
+- 01-explorar.png (app en ejecución)
+- 02-servicio.png (app en ejecución)
+- 03-reserva.png (app en ejecución)

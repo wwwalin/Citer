@@ -1,0 +1,21 @@
+<ion-app>
+  <ion-split-pane contentId="main-content" when="md">
+  <ion-menu menuId="citer-menu" contentId="main-content" type="overlay">
+    <ion-header>
+      <ion-toolbar color="light">
+        <ion-title><span class="menu-mark"><ion-icon name="calendar"></ion-icon></span> Citer</ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content>
+      <ion-list lines="none">
+        <ion-menu-toggle auto-hide="true"><ion-item button (click)="navigateTo('explore')"><ion-icon slot="start" name="search-outline" color="tertiary"></ion-icon><ion-label>Explorar negocios</ion-label></ion-item></ion-menu-toggle>
+        <ion-menu-toggle auto-hide="true"><ion-item button (click)="navigateTo('appointments')"><ion-icon slot="start" name="calendar-outline" color="tertiary"></ion-icon><ion-label>Mis citas</ion-label></ion-item></ion-menu-toggle>
+        <ion-menu-toggle auto-hide="true"><ion-item button (click)="navigateTo('saved')"><ion-icon slot="start" name="heart-outline" color="tertiary"></ion-icon><ion-label>Guardados</ion-label></ion-item></ion-menu-toggle>
+        <ion-menu-toggle auto-hide="true"><ion-item button (click)="navigateTo('profile')"><ion-icon slot="start" name="person-outline" color="tertiary"></ion-icon><ion-label>Mi perfil</ion-label></ion-item></ion-menu-toggle>
+      </ion-list>
+      <div class="menu-footer"><strong>Reserva sin llamadas</strong><p>Descubre negocios locales y encuentra un horario que te funcione.</p><small>Versión de demostración</small></div>
+    </ion-content>
+  </ion-menu>
+  <ion-router-outlet id="main-content"></ion-router-outlet>
+  </ion-split-pane>
+</ion-app>

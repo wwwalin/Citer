@@ -1,0 +1,9 @@
+ion-menu ion-toolbar { --background: #f8f5fb; --color: #251d30; }
+ion-menu ion-title { display: flex; align-items: center; gap: 9px; font-size: 17px; font-weight: 760; }
+.menu-mark { display: inline-grid; width: 29px; height: 29px; place-items: center; margin-right: 7px; border-radius: 8px; color: #fff; background: #7137c7; vertical-align: middle; }
+ion-menu ion-item { --min-height: 47px; --padding-start: 16px; font-size: 13px; }
+ion-menu ion-item ion-icon { font-size: 18px; }
+.menu-footer { position: absolute; right: 20px; bottom: 22px; left: 20px; padding: 16px; border-radius: 14px; color: #44384f; background: #f4edfb; }
+.menu-footer strong { font-size: 12px; }
+.menu-footer p { margin: 6px 0 10px; color: #7d7188; font-size: 10px; line-height: 1.5; }
+.menu-footer small { color: #8c5bc1; font-size: 9px; }

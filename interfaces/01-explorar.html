@@ -1,0 +1,29 @@
+<!-- Pantalla 1: Explorar - extraída de src/app/home/home.page.html -->
+<section *ngSwitchCase="'explore'" class="flow-screen">
+        <header class="page-header">
+          <ion-menu-button menu="citer-menu" aria-label="Abrir menú"></ion-menu-button>
+          <div><h1>Explorar</h1><p>Citas cerca de ti</p></div>
+          <button class="avatar-button" aria-label="Perfil">A</button>
+        </header>
+        <div class="location-row"><div><span class="eyebrow">UBICACIÓN</span><strong>Santiago de los Caballeros</strong></div><button (click)="showToast('Ubicación: Santiago de los Caballeros')">Cambiar</button></div>
+        <ion-searchbar [(ngModel)]="searchText" placeholder="Negocio o servicio" class="citer-search" searchIcon="search-outline" debounce="150"></ion-searchbar>
+        <div class="section-heading"><h2>Categorías</h2></div>
+        <div class="category-row">
+          <button *ngFor="let category of categories" class="category-chip" [class.selected]="selectedCategory === category" (click)="selectCategory(category)">{{ category }}</button>
+        </div>
+        <div class="section-heading available-heading"><h2>Disponibles hoy</h2><button (click)="selectCategory('Todos')">Ver todos</button></div>
+        <ion-refresher slot="fixed" (ionRefresh)="refreshBusinesses($event)"><ion-refresher-content pullingText="Desliza para actualizar" refreshingText="Actualizando..."></ion-refresher-content></ion-refresher>
+        <ion-list class="business-list">
+          <ion-item-sliding *ngFor="let business of filteredBusinesses">
+            <ion-item lines="none" class="business-item" button (pointerdown)="startLongPress(business)" (pointerup)="cancelLongPress()" (pointerleave)="cancelLongPress()" (pointermove)="cancelLongPress()" (click)="openBusiness(business)">
+              <div class="business-art" slot="start"><span>{{ business.initials }}</span></div>
+              <div class="business-info"><strong>{{ business.name }}</strong><p>{{ business.service }} · ★ {{ business.rating }} ({{ business.reviews }})</p><p class="distance">{{ business.distance }} · desde RD$ {{ business.from }}</p><span class="next-slot">Próxima cita: {{ business.nextSlot }}</span></div>
+              <ion-icon name="chevron-forward" slot="end" class="chevron"></ion-icon>
+            </ion-item>
+            <ion-item-options side="end"><ion-item-option color="danger" (click)="removeBusiness(business); $event.stopPropagation()"><ion-icon name="trash-outline"></ion-icon><span>Eliminar</span></ion-item-option></ion-item-options>
+          </ion-item-sliding>
+          <div *ngIf="filteredBusinesses.length === 0" class="empty-state"><ion-icon name="search-outline"></ion-icon><p>{{ showSavedOnly ? 'Todavía no guardas negocios. Mantén pulsado uno para guardarlo.' : 'No encontramos negocios con esa búsqueda.' }}</p></div>
+        </ion-list>
+        <nav class="bottom-nav"><button [class.active]="!showSavedOnly" (click)="goToExplore()"><ion-icon name="search-outline"></ion-icon><span>Buscar</span></button><button [class.active]="showSavedOnly" (click)="showSavedOnly = true; selectedCategory = 'Todos'"><ion-icon name="heart-outline"></ion-icon><span>Guardados</span></button><button (click)="showToast('Tu perfil estará disponible próximamente')"><ion-icon name="person-outline"></ion-icon><span>Perfil</span></button></nav>
+      </section>
+

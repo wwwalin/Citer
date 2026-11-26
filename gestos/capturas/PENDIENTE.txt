@@ -1,0 +1,1 @@
+Capturas requeridas: una por cada gesto implementado, mostrando la acción en emulador o dispositivo real.

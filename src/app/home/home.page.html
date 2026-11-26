@@ -1,0 +1,108 @@
+<ion-content class="citer-content">
+  <main class="app-shell">
+    <ng-container [ngSwitch]="screen">
+      <section *ngSwitchCase="'welcome'" class="welcome-screen">
+        <header class="brand-row"><ion-menu-button menu="citer-menu" aria-label="Abrir menú"></ion-menu-button><span class="brand-mark"><ion-icon name="calendar"></ion-icon></span><span class="brand-name">Citer</span></header>
+        <ion-card class="welcome-hero">
+          <ion-card-content class="welcome-hero-content">
+          <div class="hero-orb"></div>
+          <p class="eyebrow">TU TIEMPO, MEJOR ORGANIZADO</p>
+          <h1>Tu próxima cita,<br>sin llamadas.</h1>
+          <p class="muted">Encuentra un lugar y reserva en pocos pasos.</p>
+          <div class="hero-squiggle"></div>
+          </ion-card-content>
+        </ion-card>
+        <div class="welcome-copy"><h2>Agenda a tu manera</h2><p>Peluquerías, uñas y más, cerca de ti.</p></div>
+        <div class="welcome-actions">
+          <ion-button expand="block" class="primary-button" (click)="goToExplore()">Explorar negocios</ion-button>
+          <ion-button expand="block" fill="outline" class="google-button" (click)="goToExplore()"><img class="google-g" src="assets/google-g.png" alt="Google"> Continuar con Google</ion-button>
+          <div class="divider"><span></span> o <span></span></div>
+          <ion-button expand="block" fill="outline" class="outline-button" (click)="goToExplore()">Iniciar sesión con correo</ion-button>
+          <p class="signup-note">¿Primera vez? <button type="button" (click)="goToExplore()">Crear cuenta</button></p>
+          <p class="legal-note">Al continuar aceptas los términos y la privacidad.</p>
+        </div>
+      </section>
+
+      <section *ngSwitchCase="'explore'" class="flow-screen">
+        <header class="page-header">
+          <ion-menu-button menu="citer-menu" aria-label="Abrir menú"></ion-menu-button>
+          <div><h1>Explorar</h1><p>Citas cerca de ti</p></div>
+          <button class="avatar-button" aria-label="Perfil">A</button>
+        </header>
+        <div class="location-row"><div><span class="eyebrow">UBICACIÓN</span><strong>Santiago de los Caballeros</strong></div><button (click)="showToast('Ubicación: Santiago de los Caballeros')">Cambiar</button></div>
+        <ion-searchbar [(ngModel)]="searchText" placeholder="Negocio o servicio" class="citer-search" searchIcon="search-outline" debounce="150"></ion-searchbar>
+        <div class="section-heading"><h2>Categorías</h2></div>
+        <div class="category-row">
+          <button *ngFor="let category of categories" class="category-chip" [class.selected]="selectedCategory === category" (click)="selectCategory(category)">{{ category }}</button>
+        </div>
+        <div class="section-heading available-heading"><h2>Disponibles hoy</h2><button (click)="selectCategory('Todos')">Ver todos</button></div>
+        <ion-refresher slot="fixed" (ionRefresh)="refreshBusinesses($event)"><ion-refresher-content pullingText="Desliza para actualizar" refreshingText="Actualizando..."></ion-refresher-content></ion-refresher>
+        <ion-list class="business-list">
+          <ion-item-sliding *ngFor="let business of filteredBusinesses">
+            <ion-item lines="none" class="business-item" button (pointerdown)="startLongPress(business)" (pointerup)="cancelLongPress()" (pointerleave)="cancelLongPress()" (pointermove)="cancelLongPress()" (click)="openBusiness(business)">
+              <div class="business-art" slot="start"><span>{{ business.initials }}</span></div>
+              <div class="business-info"><strong>{{ business.name }}</strong><p>{{ business.service }} · ★ {{ business.rating }} ({{ business.reviews }})</p><p class="distance">{{ business.distance }} · desde RD$ {{ business.from }}</p><span class="next-slot">Próxima cita: {{ business.nextSlot }}</span></div>
+              <ion-icon name="chevron-forward" slot="end" class="chevron"></ion-icon>
+            </ion-item>
+            <ion-item-options side="end"><ion-item-option color="danger" (click)="removeBusiness(business); $event.stopPropagation()"><ion-icon name="trash-outline"></ion-icon><span>Eliminar</span></ion-item-option></ion-item-options>
+          </ion-item-sliding>
+          <div *ngIf="filteredBusinesses.length === 0" class="empty-state"><ion-icon name="search-outline"></ion-icon><p>{{ showSavedOnly ? 'Todavía no guardas negocios. Mantén pulsado uno para guardarlo.' : 'No encontramos negocios con esa búsqueda.' }}</p></div>
+        </ion-list>
+        <nav class="bottom-nav"><button [class.active]="!showSavedOnly" (click)="goToExplore()"><ion-icon name="search-outline"></ion-icon><span>Buscar</span></button><button [class.active]="showSavedOnly" (click)="showSavedOnly = true; selectedCategory = 'Todos'"><ion-icon name="heart-outline"></ion-icon><span>Guardados</span></button><button (click)="showToast('Tu perfil estará disponible próximamente')"><ion-icon name="person-outline"></ion-icon><span>Perfil</span></button></nav>
+      </section>
+
+      <section *ngSwitchCase="'service'" class="flow-screen">
+        <header class="simple-header"><button class="back-link" (click)="screen = 'explore'"><ion-icon name="chevron-back"></ion-icon> Volver a resultados</button><span class="step-count">Paso 2 de 4 · Servicio</span></header>
+        <div class="flow-progress" role="progressbar" aria-label="Progreso de la reserva" aria-valuemin="1" aria-valuemax="4" aria-valuenow="2"><span class="done"></span><span class="active"></span><span></span><span></span></div>
+        <ion-card class="business-cover" (touchstart)="onPinchStart($event)" (touchmove)="onPinchMove($event)" (touchend)="onPinchEnd()" aria-label="Imagen del negocio: pellizca para ampliar"><img class="cover-art" src="assets/studio-nova.svg" alt="Vista del interior de Studio Nova" [style.transform]="'scale(' + imageScale + ')' "><span class="open-pill">Abierto</span><span class="zoom-hint"><ion-icon name="expand-outline"></ion-icon> Pellizca para ampliar</span></ion-card>
+        <div class="business-title"><h1>{{ currentBusiness?.name }}</h1><p>{{ currentBusiness?.service }} · ★ {{ currentBusiness?.rating }} ({{ currentBusiness?.reviews }} reseñas)</p><p class="pin-line">📍 {{ currentBusiness?.address }} · {{ currentBusiness?.distance }}</p></div>
+        <div class="section-heading service-heading"><h2>Elige un servicio</h2></div>
+        <ion-list class="service-options">
+          <button *ngFor="let service of services" class="service-option" [class.selected]="selectedService.name === service.name" (click)="selectedService = service">
+            <span class="radio-dot"><span></span></span><span class="service-label"><strong>{{ service.name }}</strong><small>{{ service.duration }} min</small></span><strong class="service-price">RD$ {{ service.price }}</strong>
+          </button>
+        </ion-list>
+        <div class="service-footer"><ion-button expand="block" class="primary-button" (click)="screen = 'booking'">Elegir horario · RD$ {{ selectedService.price }}</ion-button><p>Precios y duración visibles antes de reservar.</p></div>
+      </section>
+
+      <section *ngSwitchCase="'booking'" class="flow-screen booking-screen">
+        <header class="simple-header"><button class="back-link" (click)="screen = 'service'"><ion-icon name="chevron-back"></ion-icon> {{ currentBusiness?.name }}</button><span class="step-count">Paso 3 de 4 · Horario</span></header>
+        <div class="flow-progress" role="progressbar" aria-label="Progreso de la reserva" aria-valuemin="1" aria-valuemax="4" aria-valuenow="3"><span class="done"></span><span class="done"></span><span class="active"></span><span></span></div>
+        <h1 class="booking-title">Elige fecha y hora</h1>
+        <p class="booking-subtitle">{{ selectedService.name }} · {{ selectedService.duration }} min · RD$ {{ selectedService.price }}</p>
+        <ion-card class="calendar-card"><ion-card-content class="calendar-content"><div class="month-heading"><strong>{{ monthLabel }}</strong><div><button aria-label="Mes anterior" disabled>‹</button><button aria-label="Mes siguiente" (click)="showToast('Próximamente podrás ver más fechas')">›</button></div></div>
+        <div class="calendar-row"><button *ngFor="let day of days" [class.selected]="selectedDate === day.iso" (click)="selectedDate = day.iso"><small>{{ day.weekday }}</small><strong>{{ day.number }}</strong></button></div></ion-card-content></ion-card>
+        <div class="section-heading times-heading"><h2>Horarios disponibles</h2></div>
+        <ion-list class="time-list"><div class="time-grid"><button *ngFor="let time of times" [class.selected]="selectedTime === time" (click)="selectedTime = time">{{ time }}</button></div></ion-list>
+        <div class="section-heading details-heading"><h2>Tus datos</h2></div>
+        <label class="field-label">Nombre<input [(ngModel)]="customer.name" type="text" placeholder="Alex Morgan" autocomplete="name"></label>
+        <label class="field-label">Número de teléfono<input [(ngModel)]="customer.phone" type="tel" placeholder="+1 (902) 555-0142" autocomplete="tel"></label>
+        <label class="field-label">Correo para confirmación<input [(ngModel)]="customer.email" type="email" placeholder="alex@email.com" autocomplete="email"></label>
+        <div class="total-row"><span>Total</span><strong>RD$ {{ selectedService.price }}.00 · sin cargos</strong></div>
+        <ion-button expand="block" class="primary-button confirm-button" (click)="confirmBooking()">Confirmar cita</ion-button>
+        <p class="privacy-note">Tu teléfono solo se usará para gestionar tu reserva.</p>
+      </section>
+
+      <section *ngSwitchCase="'confirmed'" class="confirmation-screen">
+        <div class="confirmation-progress">
+          <span class="step-count">Paso 4 de 4 · Confirmación</span>
+          <div class="flow-progress" role="progressbar" aria-label="Progreso de la reserva" aria-valuemin="1" aria-valuemax="4" aria-valuenow="4"><span class="done"></span><span class="done"></span><span class="done"></span><span class="active"></span></div>
+        </div>
+        <div class="success-icon"><ion-icon name="checkmark"></ion-icon></div>
+        <h1>¡Cita confirmada!</h1><p class="muted">Tu reserva está lista.</p>
+        <ion-card class="confirmation-card"><ion-card-content class="confirm-card-content">
+          <small>NEGOCIO</small><strong>{{ currentBusiness?.name }}</strong><p>{{ currentBusiness?.address }}</p><hr>
+          <small>SERVICIO</small><strong>{{ selectedService.name }} · {{ selectedService.duration }} min</strong><hr>
+          <div class="confirm-details"><div><small>FECHA Y HORA</small><strong>{{ formattedSelectedDate }} · {{ selectedTime }}</strong></div><strong>RD$ {{ selectedService.price }}</strong></div>
+          <div class="booking-code">Código de reserva <strong>{{ bookingCode }}</strong></div>
+        </ion-card-content></ion-card>
+        <ion-button expand="block" class="primary-button" (click)="showToast('La cita está lista para añadir al calendario')"><ion-icon slot="start" name="calendar-outline"></ion-icon>Añadir al calendario</ion-button>
+        <ion-button expand="block" color="success" class="whatsapp-button" (click)="showToast('En una versión conectada podrás enviar recordatorios por WhatsApp')"><ion-icon slot="start" name="logo-whatsapp"></ion-icon>Enviar recordatorio por WhatsApp</ion-button>
+        <div class="confirmation-actions"><ion-button fill="outline" (click)="screen = 'booking'">Cambiar cita</ion-button><ion-button fill="outline" color="medium" (click)="resetFlow()">Finalizar</ion-button></div>
+        <p class="fine-print">Las citas pueden ser modificadas 24 horas antes del servicio.</p>
+      </section>
+    </ng-container>
+
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed" class="help-fab"><ion-fab-button size="small" (click)="showToast('¿Necesitas ayuda? Escríbenos a hola@citer.app')"><ion-icon name="help-outline"></ion-icon></ion-fab-button></ion-fab>
+  </main>
+</ion-content>
