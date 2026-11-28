@@ -44,6 +44,11 @@ export class HomePage {
   imageScale = 1;
   private pinchStartDistance = 0;
   private pinchStartScale = 1;
+  private pinchInProgress = false;
+  private imageTouchStart?: { clientX: number; clientY: number };
+  private imageTouchMoved = false;
+  private lastImageTap?: { clientX: number; clientY: number; time: number };
+  private lastZoomToggleAt = 0;
   private longPressTimer?: number;
   private suppressNextBusinessClick = false;
   customer = { name: '', phone: '', email: '' };
@@ -54,6 +59,7 @@ export class HomePage {
     { name: 'Casa del Cabello', service: 'Color · ★ 4.6', category: 'Peluquería', rating: '4.6', reviews: 52, distance: 'A 1.4 km', from: 400, nextSlot: '11:15', initials: 'CC', address: '8 Calle del Sol' },
     { name: 'Barbería Central', service: 'Barbería · ★ 4.9', category: 'Barbería', rating: '4.9', reviews: 104, distance: 'A 1.1 km', from: 250, nextSlot: '12:00', initials: 'BC', address: '24 Calle Restauración' },
     { name: 'Luna Nails', service: 'Manicura · ★ 4.7', category: 'Uñas', rating: '4.7', reviews: 63, distance: 'A 1.7 km', from: 350, nextSlot: '1:00', initials: 'LN', address: '17 Calle del Sol' },
+    { name: 'Salón Aurora', service: 'Color y peinado · ★ 4.8', category: 'Peluquería', rating: '4.8', reviews: 71, distance: 'A 2.0 km', from: 450, nextSlot: '2:30', initials: 'SA', address: '31 Calle Duarte' },
   ];
   services = [
     { name: 'Corte clásico', duration: 30, price: 300 },
@@ -90,6 +96,30 @@ export class HomePage {
   goToExplore(): void {
     this.showSavedOnly = false;
     this.screen = 'explore';
+    this.scrollContentToTop();
+  }
+
+  goToBooking(): void {
+    this.screen = 'booking';
+    this.scrollContentToTop();
+  }
+
+  private scrollContentToTop(): void {
+    window.setTimeout(() => {
+      const content = document.querySelector('ion-content.citer-content') as HTMLIonContentElement | null;
+      void content?.scrollToTop(0);
+    }, 0);
+  }
+
+  backToResults(): void {
+    if (this.screen !== 'service') return;
+    this.goToExplore();
+  }
+
+  backToService(): void {
+    if (this.screen !== 'booking') return;
+    this.screen = 'service';
+    this.scrollContentToTop();
   }
 
   @HostListener('window:citer-menu', ['$event'])
@@ -129,6 +159,7 @@ export class HomePage {
     this.selectedService = this.services[0];
     this.imageScale = 1;
     this.screen = 'service';
+    this.scrollContentToTop();
   }
 
   startLongPress(business: Business): void {
@@ -165,23 +196,65 @@ export class HomePage {
   }
 
   onPinchStart(event: TouchEvent): void {
-    if (event.touches.length !== 2) return;
-    this.pinchStartDistance = this.touchDistance(event.touches[0], event.touches[1]);
-    this.pinchStartScale = this.imageScale;
+    if (event.touches.length === 2) {
+      this.pinchInProgress = true;
+      this.lastImageTap = undefined;
+      this.pinchStartDistance = this.touchDistance(event.touches[0], event.touches[1]);
+      this.pinchStartScale = this.imageScale;
+      return;
+    }
+    if (event.touches.length === 1 && !this.pinchInProgress) {
+      this.imageTouchStart = { clientX: event.touches[0].clientX, clientY: event.touches[0].clientY };
+      this.imageTouchMoved = false;
+    }
   }
 
   onPinchMove(event: TouchEvent): void {
-    if (event.touches.length !== 2 || !this.pinchStartDistance) return;
-    const ratio = this.touchDistance(event.touches[0], event.touches[1]) / this.pinchStartDistance;
-    this.imageScale = Math.min(2.5, Math.max(1, this.pinchStartScale * ratio));
+    if (event.touches.length === 2 && this.pinchStartDistance) {
+      const ratio = this.touchDistance(event.touches[0], event.touches[1]) / this.pinchStartDistance;
+      this.imageScale = Math.min(2.5, Math.max(1, this.pinchStartScale * ratio));
+      return;
+    }
+    const touch = event.touches[0];
+    if (touch && this.imageTouchStart && this.touchDistance(touch, this.imageTouchStart) > 12) {
+      this.imageTouchMoved = true;
+    }
   }
 
-  onPinchEnd(): void {
-    this.pinchStartDistance = 0;
-    this.pinchStartScale = this.imageScale;
+  onPinchEnd(event: TouchEvent): void {
+    if (this.pinchInProgress) {
+      if (event.touches.length === 0) {
+        this.pinchInProgress = false;
+        this.pinchStartDistance = 0;
+        this.pinchStartScale = this.imageScale;
+      }
+      return;
+    }
+
+    const touch = event.changedTouches[0];
+    const start = this.imageTouchStart;
+    this.imageTouchStart = undefined;
+    if (!touch || !start || this.imageTouchMoved || event.touches.length > 0) return;
+
+    const now = Date.now();
+    const previousTap = this.lastImageTap;
+    const nearPreviousTap = previousTap && this.touchDistance(touch, previousTap) <= 32;
+    if (previousTap && now - previousTap.time <= 350 && nearPreviousTap) {
+      this.lastImageTap = undefined;
+      this.toggleImageZoom();
+      return;
+    }
+    this.lastImageTap = { clientX: touch.clientX, clientY: touch.clientY, time: now };
   }
 
-  private touchDistance(first: Touch, second: Touch): number {
+  toggleImageZoom(): void {
+    const now = Date.now();
+    if (now - this.lastZoomToggleAt < 180) return;
+    this.lastZoomToggleAt = now;
+    this.imageScale = this.imageScale > 1 ? 1 : 2;
+  }
+
+  private touchDistance(first: { clientX: number; clientY: number }, second: { clientX: number; clientY: number }): number {
     return Math.hypot(first.clientX - second.clientX, first.clientY - second.clientY);
   }
 

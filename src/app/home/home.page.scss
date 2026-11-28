@@ -60,8 +60,8 @@ ion-button { --border-radius: 10px; text-transform: none; letter-spacing: 0; fon
 .available-heading { margin-top: 17px; }
 .business-list { padding: 0; background: transparent; }
 .business-list ion-item-sliding { margin-bottom: 8px; border: 1px solid #eae5ef; border-radius: 12px; overflow: hidden; }
-.business-item { --background: #fff; --padding-start: 9px; --inner-padding-end: 7px; --min-height: 82px; }
-.business-item::part(native) { padding-top: 8px; padding-bottom: 8px; }
+.business-item { --background: #fff; --padding-start: 9px; --inner-padding-end: 7px; --min-height: 98px; }
+.business-item::part(native) { padding-top: 10px; padding-bottom: 10px; }
 .business-art { width: 51px; height: 54px; margin-right: 9px; display: grid; place-items: center; border-radius: 9px; color: #8d63ba; background: linear-gradient(145deg, #f0eaf6, #e9e3f0); font-size: 13px; font-weight: 740; }
 .business-info { min-width: 0; }
 .business-info strong { display: block; margin-bottom: 4px; font-size: 11px; font-weight: 730; }
@@ -80,9 +80,11 @@ ion-item-option ion-icon { font-size: 17px; }
 .help-fab { position: fixed; bottom: 69px; right: max(15px, calc((100vw - 460px) / 2 + 12px)); }
 .help-fab ion-fab-button { --background: #7137c7; --background-activated: #5d29ae; --box-shadow: 0 4px 12px #7137c744; width: 38px; height: 38px; }
 
-.simple-header { min-height: 36px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 9px; }
-.back-link { display: inline-flex; align-items: center; gap: 2px; border: 0; padding: 0; color: #7137c7; background: transparent; font-size: 10px; }
-.back-link ion-icon { font-size: 13px; }
+.simple-header { min-height: 48px; display: flex; align-items: center; justify-content: space-between; margin: 12px 0 9px; }
+.back-link { display: inline-flex; align-items: center; justify-content: flex-start; gap: 4px; min-width: 44px; min-height: 48px; max-width: calc(100% - 110px); margin-left: 110px; border: 0; border-radius: 10px; padding: 0 12px; color: #7137c7; background: transparent; font-size: 11px; text-align: left; touch-action: manipulation; cursor: pointer; }
+.back-link:active { background: #f3eafd; }
+.back-chevron { flex: 0 0 48px; width: 48px; height: 48px; margin-left: -12px; display: inline-flex; align-items: center; justify-content: center; border-radius: 10px; font-size: 23px; line-height: 1; pointer-events: none; }
+.back-link span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .step-count { color: #8b8491; font-size: 9px; white-space: nowrap; }
 .flow-progress { display: flex; gap: 5px; margin: 0 0 12px; }
 .flow-progress span { height: 3px; flex: 1; border-radius: 4px; background: #ece8ef; }

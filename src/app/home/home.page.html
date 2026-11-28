@@ -52,9 +52,9 @@
       </section>
 
       <section *ngSwitchCase="'service'" class="flow-screen">
-        <header class="simple-header"><button class="back-link" (click)="screen = 'explore'"><ion-icon name="chevron-back"></ion-icon> Volver a resultados</button><span class="step-count">Paso 2 de 4 · Servicio</span></header>
+        <header class="simple-header"><button type="button" class="back-link" aria-label="Volver a resultados" (click)="backToResults()"><span class="back-chevron" aria-hidden="true">‹</span><span>Volver a resultados</span></button><span class="step-count">Paso 2 de 4 · Servicio</span></header>
         <div class="flow-progress" role="progressbar" aria-label="Progreso de la reserva" aria-valuemin="1" aria-valuemax="4" aria-valuenow="2"><span class="done"></span><span class="active"></span><span></span><span></span></div>
-        <ion-card class="business-cover" (touchstart)="onPinchStart($event)" (touchmove)="onPinchMove($event)" (touchend)="onPinchEnd()" aria-label="Imagen del negocio: pellizca para ampliar"><img class="cover-art" src="assets/studio-nova.svg" alt="Vista del interior de Studio Nova" [style.transform]="'scale(' + imageScale + ')' "><span class="open-pill">Abierto</span><span class="zoom-hint"><ion-icon name="expand-outline"></ion-icon> Pellizca para ampliar</span></ion-card>
+        <ion-card class="business-cover" (touchstart)="onPinchStart($event)" (touchmove)="onPinchMove($event)" (touchend)="onPinchEnd($event)" (dblclick)="toggleImageZoom()" aria-label="Imagen del negocio: pellizca o toca dos veces para ampliar"><img class="cover-art" src="assets/studio-nova.svg" alt="Vista del interior de Studio Nova" [style.transform]="'scale(' + imageScale + ')' "><span class="open-pill">Abierto</span><span class="zoom-hint"><ion-icon name="expand-outline"></ion-icon> Pellizca o toca dos veces para ampliar</span></ion-card>
         <div class="business-title"><h1>{{ currentBusiness?.name }}</h1><p>{{ currentBusiness?.service }} · ★ {{ currentBusiness?.rating }} ({{ currentBusiness?.reviews }} reseñas)</p><p class="pin-line">📍 {{ currentBusiness?.address }} · {{ currentBusiness?.distance }}</p></div>
         <div class="section-heading service-heading"><h2>Elige un servicio</h2></div>
         <ion-list class="service-options">
@@ -62,11 +62,11 @@
             <span class="radio-dot"><span></span></span><span class="service-label"><strong>{{ service.name }}</strong><small>{{ service.duration }} min</small></span><strong class="service-price">RD$ {{ service.price }}</strong>
           </button>
         </ion-list>
-        <div class="service-footer"><ion-button expand="block" class="primary-button" (click)="screen = 'booking'">Elegir horario · RD$ {{ selectedService.price }}</ion-button><p>Precios y duración visibles antes de reservar.</p></div>
+        <div class="service-footer"><ion-button expand="block" class="primary-button" (click)="goToBooking()">Elegir horario · RD$ {{ selectedService.price }}</ion-button><p>Precios y duración visibles antes de reservar.</p></div>
       </section>
 
       <section *ngSwitchCase="'booking'" class="flow-screen booking-screen">
-        <header class="simple-header"><button class="back-link" (click)="screen = 'service'"><ion-icon name="chevron-back"></ion-icon> {{ currentBusiness?.name }}</button><span class="step-count">Paso 3 de 4 · Horario</span></header>
+        <header class="simple-header"><button type="button" class="back-link" aria-label="Volver al servicio" (click)="backToService()"><span class="back-chevron" aria-hidden="true">‹</span><span>{{ currentBusiness?.name }}</span></button><span class="step-count">Paso 3 de 4 · Horario</span></header>
         <div class="flow-progress" role="progressbar" aria-label="Progreso de la reserva" aria-valuemin="1" aria-valuemax="4" aria-valuenow="3"><span class="done"></span><span class="done"></span><span class="active"></span><span></span></div>
         <h1 class="booking-title">Elige fecha y hora</h1>
         <p class="booking-subtitle">{{ selectedService.name }} · {{ selectedService.duration }} min · RD$ {{ selectedService.price }}</p>
